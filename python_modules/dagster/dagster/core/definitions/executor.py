@@ -1,6 +1,6 @@
 from functools import update_wrapper
 
-from dagster import check
+from dagster import Noneable, check
 from dagster.builtins import Int
 from dagster.config.field import Field
 from dagster.config.field_utils import check_user_facing_opt_config_param
@@ -131,7 +131,8 @@ class _ExecutorDecoratorCallable(object):
 
 
 @executor(
-    name='in_process', config={'retries': get_retries_config()},
+    name='in_process',
+    config={'retries': get_retries_config(), 'marker': Field(Noneable(str), is_required=False),},
 )
 def in_process_executor(init_context):
     '''The default in-process executor.
@@ -155,7 +156,8 @@ def in_process_executor(init_context):
 
     return InProcessExecutorConfig(
         # shouldn't need to .get() here - issue with defaults in config setup
-        retries=Retries.from_config(init_context.executor_config.get('retries', {'enabled': {}}))
+        retries=Retries.from_config(init_context.executor_config.get('retries', {'enabled': {}})),
+        marker=init_context.executor_config.get('marker'),
     )
 
 

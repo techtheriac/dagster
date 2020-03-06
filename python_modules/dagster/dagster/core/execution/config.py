@@ -116,8 +116,9 @@ class ExecutorConfig(six.with_metaclass(ABCMeta)):  # pylint: disable=no-init
 
 
 class InProcessExecutorConfig(ExecutorConfig):
-    def __init__(self, retries):
+    def __init__(self, retries, marker):
         self.retries = retries
+        self.marker = marker
 
     def get_engine(self):
         from dagster.core.engine.engine_inprocess import InProcessEngine
