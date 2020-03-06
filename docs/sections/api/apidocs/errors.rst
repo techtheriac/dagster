@@ -10,11 +10,9 @@ own exceptions.
 
 .. autoexception:: DagsterError
 
-.. autoexception:: DagsterExecutionStepExecutionError
+.. autoexception:: DagsterEvaluateConfigValueError
 
-.. autoexception:: DagsterExecutionStepNotFoundError
-
-.. autoexception:: DagsterInvalidConfigError
+.. autoexception:: DagsterEventLogInvalidForRun
 
 .. autoexception:: DagsterExecutionStepExecutionError
 
@@ -32,7 +30,13 @@ own exceptions.
 
 .. autoexception:: DagsterStepOutputNotFoundError
 
+.. autoexception:: DagsterSubprocessError
+
+.. autoexception:: DagsterTypeCheckDidNotPass
+
 .. autoexception:: DagsterTypeCheckError
+
+.. autoexception:: DagsterUnknownResourceError
 
 .. autoexception:: DagsterUnmetExecutorRequirementsError
 

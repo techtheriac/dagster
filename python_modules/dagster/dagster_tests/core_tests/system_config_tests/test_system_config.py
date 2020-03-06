@@ -19,13 +19,13 @@ from dagster import (
     solid,
 )
 from dagster.config.config_type import ConfigTypeKind
-from dagster.config.errors import DagsterEvaluateConfigValueError
 from dagster.core.definitions import create_environment_schema, create_environment_type
 from dagster.core.definitions.environment_configs import (
     EnvironmentClassCreationData,
     define_solid_config_cls,
     define_solid_dictionary_cls,
 )
+from dagster.core.errors import DagsterEvaluateConfigValueError
 from dagster.core.system_config.objects import EnvironmentConfig, SolidConfig
 from dagster.core.test_utils import throwing_validate_config_value
 from dagster.loggers import default_loggers

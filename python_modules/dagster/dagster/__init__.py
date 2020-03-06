@@ -57,11 +57,12 @@ from dagster.core.definitions import (
     system_storage,
 )
 from dagster.core.engine import Engine
-from dagster.core.engine.engine_inprocess import DagsterTypeCheckDidNotPass
 from dagster.core.engine.init import InitExecutorContext
 from dagster.core.errors import (
     DagsterConfigMappingFunctionError,
     DagsterError,
+    DagsterEvaluateConfigValueError,
+    DagsterEventLogInvalidForRun,
     DagsterExecutionStepExecutionError,
     DagsterExecutionStepNotFoundError,
     DagsterInvalidConfigDefinitionError,
@@ -72,6 +73,7 @@ from dagster.core.errors import (
     DagsterRunNotFoundError,
     DagsterStepOutputNotFoundError,
     DagsterSubprocessError,
+    DagsterTypeCheckDidNotPass,
     DagsterTypeCheckError,
     DagsterUnknownResourceError,
     DagsterUnmetExecutorRequirementsError,
@@ -183,18 +185,22 @@ __all__ = [
     'TypeCheckContext',
     'PipelineRun',
     # Errors
+    'DagsterEvaluateConfigValueError',
+    'DagsterEventLogInvalidForRun',
     'DagsterExecutionStepExecutionError',
     'DagsterExecutionStepNotFoundError',
     'DagsterInvalidConfigError',
     'DagsterInvalidDefinitionError',
     'DagsterInvariantViolationError',
     'DagsterResourceFunctionError',
-    'DagsterTypeCheckError',
-    'DagsterTypeCheckDidNotPass',
-    'DagsterUnknownResourceError',
-    'DagsterUserCodeExecutionError',
+    'DagsterRunNotFoundError',
     'DagsterStepOutputNotFoundError',
     'DagsterSubprocessError',
+    'DagsterTypeCheckDidNotPass',
+    'DagsterTypeCheckError',
+    'DagsterUnknownResourceError',
+    'DagsterUnmetExecutorRequirementsError',
+    'DagsterUserCodeExecutionError',
     # Logging
     'DagsterLogManager',
     # Utilities
