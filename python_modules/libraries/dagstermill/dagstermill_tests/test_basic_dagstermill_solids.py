@@ -67,6 +67,12 @@ def test_hello_world():
 
 
 @pytest.mark.notebook_test
+def test_hello_world_with_config():
+    with exec_for_test('define_hello_world_config_pipeline') as result:
+        assert result.success
+
+
+@pytest.mark.notebook_test
 def test_reexecute_result_notebook():
     with exec_for_test('define_hello_world_pipeline') as result:
         assert result.success
@@ -116,8 +122,7 @@ def test_add_pipeline():
 @pytest.mark.notebook_test
 def test_notebook_dag():
     with exec_for_test(
-        'define_test_notebook_dag_pipeline',
-        {'solids': {'load_a': {'config': 1}, 'load_b': {'config': 2}}},
+        'define_test_notebook_dag_pipeline', {'solids': {'load_a': {'config': 1}, 'load_b': {'config': 2}}},
     ) as result:
         assert result.success
         assert result.result_for_solid('add_two').output_value() == 3
@@ -257,7 +262,13 @@ def test_resources_notebook_with_exception():
 
 
 @pytest.mark.notebook_test
-def test_bad_kernel():
+def define_bad_kernel_pipeline():
     with pytest.raises(NoSuchKernel):
-        with exec_for_test('define_bad_kernel_pipeline'):
+        with exec_for_test('bad_kernel_pipeline'):
             pass
+
+
+@pytest.mark.notebook_test
+def test_hello_logging():
+    with exec_for_test('define_hello_logging_pipeline') as result:
+        assert result.success
