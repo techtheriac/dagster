@@ -37,11 +37,11 @@ def cleanup_result_notebook(result):
 
 
 @contextmanager
-def exec_for_test(fn_name, env=None, raise_on_error=True, **kwargs):
+def exec_for_test(pipeline_name, env=None, raise_on_error=True, **kwargs):
     result = None
 
     handle = handle_for_pipeline_cli_args(
-        {'module_name': 'dagstermill.examples.repository', 'fn_name': fn_name}
+        {'module_name': 'dagstermill.examples.repository', 'pipeline_name': pipeline_name}
     )
 
     pipeline = handle.build_pipeline_definition()
@@ -62,13 +62,19 @@ def exec_for_test(fn_name, env=None, raise_on_error=True, **kwargs):
 
 @pytest.mark.notebook_test
 def test_hello_world():
-    with exec_for_test('define_hello_world_pipeline') as result:
+    with exec_for_test('hello_world_pipeline') as result:
+        assert result.success
+
+
+@pytest.mark.notebook_test
+def test_hello_world_with_config():
+    with exec_for_test('hello_world_config_pipeline') as result:
         assert result.success
 
 
 @pytest.mark.notebook_test
 def test_reexecute_result_notebook():
-    with exec_for_test('define_hello_world_pipeline') as result:
+    with exec_for_test('hello_world_pipeline') as result:
         assert result.success
 
         materialization_events = [
@@ -88,14 +94,14 @@ def test_reexecute_result_notebook():
 
 @pytest.mark.notebook_test
 def test_hello_world_with_output():
-    with exec_for_test('define_hello_world_with_output_pipeline') as result:
+    with exec_for_test('hello_world_with_output_pipeline') as result:
         assert result.success
         assert result.result_for_solid('hello_world_output').output_value() == 'hello, world'
 
 
 @pytest.mark.notebook_test
 def test_hello_world_explicit_yield():
-    with exec_for_test('define_hello_world_explicit_yield_pipeline') as result:
+    with exec_for_test('hello_world_explicit_yield_pipeline') as result:
         materializations = [
             x for x in result.event_list if x.event_type_value == 'STEP_MATERIALIZATION'
         ]
@@ -107,7 +113,7 @@ def test_hello_world_explicit_yield():
 @pytest.mark.notebook_test
 def test_add_pipeline():
     with exec_for_test(
-        'define_add_pipeline', {'loggers': {'console': {'config': {'log_level': 'ERROR'}}}}
+        'test_add_pipeline', {'loggers': {'console': {'config': {'log_level': 'ERROR'}}}}
     ) as result:
         assert result.success
         assert result.result_for_solid('add_two_numbers').output_value() == 3
@@ -116,8 +122,7 @@ def test_add_pipeline():
 @pytest.mark.notebook_test
 def test_notebook_dag():
     with exec_for_test(
-        'define_test_notebook_dag_pipeline',
-        {'solids': {'load_a': {'config': 1}, 'load_b': {'config': 2}}},
+        'test_notebook_dag', {'solids': {'load_a': {'config': 1}, 'load_b': {'config': 2}}},
     ) as result:
         assert result.success
         assert result.result_for_solid('add_two').output_value() == 3
@@ -127,7 +132,7 @@ def test_notebook_dag():
 @pytest.mark.notebook_test
 def test_error_notebook():
     with pytest.raises(PapermillExecutionError) as exc:
-        with exec_for_test('define_error_pipeline') as result:
+        with exec_for_test('error_pipeline') as result:
             pass
 
     assert 'Someone set up us the bomb' in str(exc.value)
@@ -142,14 +147,14 @@ def test_error_notebook():
 @pytest.mark.notebook_test
 def test_tutorial_pipeline():
     with exec_for_test(
-        'define_tutorial_pipeline', {'loggers': {'console': {'config': {'log_level': 'DEBUG'}}}}
+        'tutorial_pipeline', {'loggers': {'console': {'config': {'log_level': 'DEBUG'}}}}
     ) as result:
         assert result.success
 
 
 @pytest.mark.notebook_test
 def test_hello_world_reexecution():
-    with exec_for_test('define_hello_world_pipeline') as result:
+    with exec_for_test('hello_world_pipeline') as result:
         assert result.success
 
         output_notebook_path = get_path(
@@ -195,7 +200,7 @@ def test_hello_world_reexecution():
 def test_resources_notebook():
     with safe_tempfile_path() as path:
         with exec_for_test(
-            'define_resource_pipeline',
+            'resource_pipeline',
             {'resources': {'list': {'config': path}}},
             run_config=RunConfig(mode='prod'),
         ) as result:
@@ -226,7 +231,7 @@ def test_resources_notebook_with_exception():
     result = None
     with safe_tempfile_path() as path:
         with exec_for_test(
-            'define_resource_with_exception_pipeline',
+            'resource_with_exception_pipeline',
             {'resources': {'list': {'config': path}}},
             raise_on_error=False,
         ) as result:
@@ -259,5 +264,11 @@ def test_resources_notebook_with_exception():
 @pytest.mark.notebook_test
 def test_bad_kernel():
     with pytest.raises(NoSuchKernel):
-        with exec_for_test('define_bad_kernel_pipeline'):
+        with exec_for_test('bad_kernel_pipeline'):
             pass
+
+
+@pytest.mark.notebook_test
+def test_hello_logging():
+    with exec_for_test('hello_logging_pipeline') as result:
+        assert result.success
